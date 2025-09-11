@@ -1,6 +1,6 @@
 -- Schema do banco de dados para o sistema de questionários
-CREATE DATABASE IF NOT EXISTS projectslides CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE projectslides;
+-- CREATE DATABASE IF NOT EXISTS projectslides CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE projectslides;
 
 -- Tabela de administradores
 CREATE TABLE IF NOT EXISTS admins (
