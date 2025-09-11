@@ -2,17 +2,13 @@
 // Script para configurar o banco de dados no Railway
 echo "Configurando banco de dados...\n";
 
-// Carrega as variáveis de ambiente
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
 try {
-    // Conecta ao banco usando as variáveis do Railway
-    $host = $_ENV['MYSQLHOST'] ?? 'mysql.railway.internal';
-    $port = $_ENV['MYSQLPORT'] ?? '3306';
-    $dbname = $_ENV['MYSQLDATABASE'] ?? 'railway';
-    $user = $_ENV['MYSQLUSER'] ?? 'root';
-    $password = $_ENV['MYSQLPASSWORD'] ?? '';
+    // Conecta ao banco usando as variáveis do Railway (já disponíveis no ambiente)
+    $host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+    $port = getenv('MYSQLPORT') ?: '3306';
+    $dbname = getenv('MYSQLDATABASE') ?: 'railway';
+    $user = getenv('MYSQLUSER') ?: 'root';
+    $password = getenv('MYSQLPASSWORD') ?: '';
     
     echo "Conectando ao banco: {$host}:{$port}/{$dbname}\n";
     
