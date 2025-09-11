@@ -28,6 +28,7 @@ header('Referrer-Policy: strict-origin-when-cross-origin');
 // Rota para setup do banco
 Router::get('/setup-database', function() {
     include __DIR__ . '/../setup-database.php';
+    exit;
 });
 
 // Rotas públicas
