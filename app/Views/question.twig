@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('question-form');
   const submitBtn = document.getElementById('submit-btn');
   const radioButtons = document.querySelectorAll('input[type="radio"]');
+  const container = document.getElementById('question-container');
   
   // Clear any pre-selected radio buttons
   radioButtons.forEach(rb => rb.checked = false);
@@ -43,6 +44,27 @@ document.addEventListener('DOMContentLoaded', function() {
       const anySelected = Array.from(radioButtons).some(rb => rb.checked);
       submitBtn.disabled = !anySelected;
     });
+  });
+
+  // Handle form submission with smooth transition
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const selectedAnswer = form.querySelector('input[name="answer"]:checked');
+    if (!selectedAnswer) return;
+    
+    // Disable form during submission
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Carregando...';
+    submitBtn.style.opacity = '0.7';
+    
+    // Add fade out effect
+    container.classList.add('fade-out');
+    
+    // Submit form after fade out
+    setTimeout(() => {
+      form.submit();
+    }, 300);
   });
 });
 </script>
