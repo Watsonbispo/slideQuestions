@@ -1,0 +1,28 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+  <h1>Trazendo o seu resultado...</h1>
+  <div class="muted">Isso pode levar alguns segundos.</div>
+  <div class="loader-wrap" aria-hidden="true">
+    <div class="spinner"></div>
+  </div>
+  <style>
+    .loader-wrap { display:flex; align-items:center; justify-content:center; padding: 24px 0; }
+    .spinner {
+      width: 48px; height: 48px;
+      border: 4px solid #e5e5e5;
+      border-top-color: #0d6efd;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  setTimeout(function(){
+    window.location.replace('{{ purchaseUrl }}');
+  }, 2000);
+</script>
+{% endblock %}

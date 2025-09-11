@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title|default('Questionário') }}</title>
+  <style>
+    :root { 
+      --gap: 16px; 
+      --fg: #1a1a1a; 
+      --bg: #ffffff; 
+      --muted: #6b7280; 
+      --primary: #0d6efd; 
+      --ice-white: #f8fafc;
+      --border-light: #e2e8f0;
+      --shadow-light: rgba(0, 0, 0, 0.05);
+      --shadow-medium: rgba(0, 0, 0, 0.1);
+    }
+    * { box-sizing: border-box; }
+    
+    body { 
+      margin:0; 
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif; 
+      color: var(--fg); 
+      /* Background image with overlay */
+      background-image: url('{{ backgroundUrl|default('/assets/imgs/590f67723c50604dd9ab22d6dd30c9ba.jpg') }}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      /* Fallback gradient if image doesn't exist */
+      background-color: var(--ice-white);
+    }
+    
+    /* Dark overlay for better text readability - behind everything */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: -1;
+    }
+    
+    /* Centro absoluto e respiro amplo */
+    .container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .card {
+      width: 100%;
+      max-width: 960px;
+      border: 1px solid var(--border-light);
+      border-radius: 24px;
+      padding: 48px 56px;
+      box-shadow: 0 20px 60px var(--shadow-light), 0 8px 25px var(--shadow-medium);
+      background: var(--bg);
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Subtle gradient overlay on card */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+    }
+    
+    h1 { 
+      font-size: 2.4rem; 
+      line-height: 1.2; 
+      margin: 0 0 24px; 
+      font-weight: 600;
+      color: var(--fg);
+      letter-spacing: -0.02em;
+    }
+    .muted { 
+      color: var(--muted); 
+      font-size: 1rem; 
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .options { 
+      display: grid; 
+      gap: 16px; 
+      margin: 32px 0 40px; 
+      transition: all 0.3s ease;
+    }
+    
+    /* Desfoque nas outras opções quando hover em uma */
+    .options:hover .options label:not(:hover) {
+      filter: blur(2px);
+      opacity: 0.6;
+      transform: scale(0.98);
+    }
+    .options label { 
+      font-size: 1.1rem; 
+      line-height: 1.5; 
+      display: flex; 
+      align-items: center; 
+      gap: 16px; 
+      padding: 20px 24px; 
+      border-radius: 16px;
+      background: var(--ice-white);
+      border: 2px solid var(--border-light);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      font-weight: 500;
+      overflow: hidden;
+    }
+    
+    /* Efeito de hover mais fluido */
+    .options label::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .options label:hover {
+      background: var(--bg);
+      border-color: var(--border-light);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(248, 250, 252, 0.8), 0 4px 20px rgba(248, 250, 252, 0.6);
+      filter: none !important;
+      opacity: 1 !important;
+      z-index: 10;
+      position: relative;
+    }
+    
+    .options label:hover::before {
+      left: 100%;
+    }
+    
+    .options label:active {
+      transform: translateY(-1px) scale(1.01);
+      transition: all 0.1s ease;
+    }
+    
+    .options label:has(input:checked) {
+      background: var(--bg);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1), 0 8px 25px rgba(13, 110, 253, 0.1);
+      transform: translateY(-1px);
+    }
+    .options input[type=radio] { 
+      width: 20px; 
+      height: 20px; 
+      accent-color: var(--primary);
+    }
+    
+    .row { 
+      display: flex; 
+      gap: 16px; 
+      flex-wrap: wrap; 
+      margin-top: 8px;
+    }
+    
+    /* Botões brancos com texto preto e hover azul */
+    .row a, .row button { 
+      appearance: none; 
+      border: 2px solid var(--border-light); 
+      background: var(--bg); 
+      color: var(--fg); 
+      padding: 16px 24px; 
+      border-radius: 12px; 
+      text-decoration: none; 
+      cursor: pointer; 
+      font-size: 1.05rem; 
+      font-weight: 600;
+      -webkit-tap-highlight-color: transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .row a:hover, .row button:hover { 
+      background: var(--primary); 
+      border-color: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(13, 110, 253, 0.25);
+    }
+    
+    .row a[aria-disabled="true"] { 
+      pointer-events: none; 
+      opacity: 0.5; 
+    }
+    
+    .row .primary { 
+      background: var(--bg); 
+      color: var(--fg); 
+      border-color: var(--border-light); 
+    }
+    .row .primary[disabled] { 
+      opacity: 0.6; 
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .row .primary[disabled]:hover {
+      background: var(--bg);
+      border-color: var(--border-light);
+      color: var(--fg);
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Mobile-first improvements */
+    @media (max-width: 768px) {
+      .card { 
+        padding: 32px 24px; 
+        border-radius: 20px; 
+        margin: 16px;
+      }
+      h1 { font-size: 2rem; }
+      .options { gap: 12px; }
+      .options label { 
+        font-size: 1.05rem; 
+        padding: 16px 20px; 
+      }
+      .options input[type=radio] { width: 18px; height: 18px; }
+      .row { gap: 12px; }
+      .row a, .row button { 
+        padding: 14px 20px; 
+        font-size: 1rem; 
+      }
+      .row a { flex: 1 1 45%; text-align: center; }
+      .row button { flex: 1 1 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 16px; }
+      .card { 
+        padding: 24px 20px; 
+        border-radius: 16px; 
+        margin: 8px;
+      }
+      h1 { font-size: 1.8rem; }
+      .muted { font-size: 0.9rem; }
+      .options label { 
+        font-size: 1rem; 
+        padding: 14px 16px; 
+      }
+      .options input[type=radio] { width: 16px; height: 16px; }
+      .row { gap: 10px; }
+      .row a, .row button { 
+        padding: 14px 16px; 
+        font-size: 1rem; 
+      }
+      .row a, .row button { flex: 1 1 100%; text-align: center; }
+    }
+
+    @media (max-width: 360px) {
+      h1 { font-size: 1.6rem; }
+      .options label { font-size: 0.95rem; }
+      .row a, .row button { 
+        font-size: 0.95rem; 
+        padding: 12px 14px; 
+      }
+    }
+
+    /* Estilos do Modal Administrativo */
+    .admin-trigger {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid var(--border-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .admin-trigger:hover {
+      background: var(--primary);
+      color: white;
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(13, 110, 253, 0.3);
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background-color: var(--bg);
+      margin: 5% auto;
+      padding: 0;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--fg);
+    }
+
+    .close {
+      color: var(--muted);
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close:hover {
+      color: var(--fg);
+    }
+
+    .admin-section {
+      padding: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border-light);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn-primary, .btn-secondary, .btn-small, .btn-warning, .btn-success, .btn-danger {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0b5ed7;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--muted);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+
+    .btn-warning {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .btn-success {
+      background: #198754;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #157347;
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .questions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .question-item {
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 20px;
+      background: var(--ice-white);
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 16px;
+    }
+
+    .question-header h4 {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .question-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .question-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .option-tag {
+      background: var(--bg);
+      border: 1px solid var(--border-light);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .option-row label {
+      width: 30px;
+      font-weight: 600;
+      margin-bottom: 0;
+    }
+
+    .option-row input {
+      flex: 1;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
+
+      .modal-header {
+        padding: 20px 24px;
+      }
+
+      .admin-section {
+        padding: 24px;
+      }
+
+      .question-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .question-actions {
+        justify-content: flex-start;
+      }
+
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .form-actions button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Botão de administração (canto superior direito) -->
+  <div class="admin-trigger" onclick="openAdminModal()" title="Administração">
+    ⚙️
+  </div>
+
+  <div class="container">
+    <div class="card">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+  {% block scripts %}{% endblock %}
+
+  <!-- Modal Administrativo -->
+  <div id="adminModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Administração de Perguntas</h2>
+        <span class="close" onclick="closeAdminModal()">&times;</span>
+      </div>
+      
+      <!-- Login Form -->
+      <div id="loginForm" class="admin-section">
+        <h3>Login Administrativo</h3>
+        <form id="adminLoginForm">
+          <div class="form-group">
+            <label for="adminUsername">Usuário:</label>
+            <input type="text" id="adminUsername" name="username" required>
+          </div>
+          <div class="form-group">
+            <label for="adminPassword">Senha:</label>
+            <input type="password" id="adminPassword" name="password" required>
+          </div>
+          <button type="submit" class="btn-primary">Entrar</button>
+        </form>
+      </div>
+
+      <!-- Admin Panel -->
+      <div id="adminPanel" class="admin-section" style="display: none;">
+        <div class="admin-actions">
+          <button onclick="showCreateQuestionForm()" class="btn-primary">Nova Pergunta</button>
+          <button onclick="logoutAdmin()" class="btn-secondary">Sair</button>
+        </div>
+        
+        <div id="questionsList" class="questions-list">
+          <!-- Lista de perguntas será carregada aqui -->
+        </div>
+      </div>
+
+      <!-- Create/Edit Question Form -->
+      <div id="questionForm" class="admin-section" style="display: none;">
+        <h3 id="formTitle">Nova Pergunta</h3>
+        <form id="questionEditForm">
+          <input type="hidden" id="questionId" name="id">
+          <div class="form-group">
+            <label for="questionTitle">Título da Pergunta:</label>
+            <textarea id="questionTitle" name="title" rows="3" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Opções de Resposta:</label>
+            <div id="optionsContainer">
+              <div class="option-row">
+                <label>A:</label>
+                <input type="text" name="options[a]" placeholder="Opção A">
+              </div>
+              <div class="option-row">
+                <label>B:</label>
+                <input type="text" name="options[b]" placeholder="Opção B">
+              </div>
+              <div class="option-row">
+                <label>C:</label>
+                <input type="text" name="options[c]" placeholder="Opção C">
+              </div>
+              <div class="option-row">
+                <label>D:</label>
+                <input type="text" name="options[d]" placeholder="Opção D">
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">Salvar</button>
+            <button type="button" onclick="saveAndApply()" class="btn-primary">Aplicar</button>
+            <button type="button" onclick="cancelQuestionForm()" class="btn-secondary">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // Variáveis globais
+  let isAdminLoggedIn = false;
+  let questions = [];
+  let csrfToken = '';
+
+  // Funções do modal
+  function openAdminModal() {
+    document.getElementById('adminModal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    loadCsrfToken();
+  }
+
+  // Carregar token CSRF
+  async function loadCsrfToken() {
+    try {
+      const response = await fetch('/admin/csrf-token');
+      const data = await response.json();
+      if (data.success) {
+        csrfToken = data.csrf_token;
+      }
+    } catch (error) {
+      console.error('Erro ao carregar token CSRF:', error);
+    }
+  }
+
+  function closeAdminModal() {
+    document.getElementById('adminModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  // Login administrativo
+  document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('adminUsername').value;
+    const password = document.getElementById('adminPassword').value;
+    
+    try {
+      const response = await fetch('/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        isAdminLoggedIn = true;
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadQuestions();
+      } else {
+        alert('Erro: ' + data.message);
+      }
+    } catch (error) {
+      alert('Erro de conexão: ' + error.message);
+    }
+  });
+
+  // Carregar perguntas
+  async function loadQuestions() {
+    try {
+      const response = await fetch('/admin/questions');
+      const data = await response.json();
+      
+      if (data.success) {
+        questions = data.questions;
+        renderQuestions();
+      } else {
+        alert('Erro ao carregar perguntas: ' + data.message);
+      }
+    } catch (error) {
+      alert('Erro de conexão: ' + error.message);
+    }
+  }
+
+  // Renderizar lista de perguntas
+  function renderQuestions() {
+    const container = document.getElementById('questionsList');
+    container.innerHTML = '';
+    
+    questions.forEach(question => {
+      const questionDiv = document.createElement('div');
+      questionDiv.className = 'question-item';
+      questionDiv.innerHTML = `
+        <div class="question-header">
+          <h4>${question.title}</h4>
+          <div class="question-actions">
+            <button onclick="editQuestion(${question.id})" class="btn-small">Editar</button>
+            <button onclick="toggleQuestion(${question.id})" class="btn-small ${question.is_active ? 'btn-warning' : 'btn-success'}">
+              ${question.is_active ? 'Desativar' : 'Ativar'}
+            </button>
+            <button onclick="deleteQuestion(${question.id})" class="btn-small btn-danger">Excluir</button>
+          </div>
+        </div>
+        <div class="question-options">
+          ${question.options.map(opt => `<span class="option-tag">${opt.id}: ${opt.text}</span>`).join('')}
+        </div>
+      `;
+      container.appendChild(questionDiv);
+    });
+  }
+
+  // Editar pergunta
+  function editQuestion(id) {
+    const question = questions.find(q => q.id === id);
+    if (!question) return;
+    
+    document.getElementById('formTitle').textContent = 'Editar Pergunta';
+    document.getElementById('questionId').value = question.id;
+    document.getElementById('questionTitle').value = question.title;
+    
+    // Preencher opções
+    question.options.forEach(opt => {
+      const input = document.querySelector(`input[name="options[${opt.id}]"]`);
+      if (input) input.value = opt.text;
+    });
+    
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('questionForm').style.display = 'block';
+  }
+
+  // Nova pergunta
+  function showCreateQuestionForm() {
+    document.getElementById('formTitle').textContent = 'Nova Pergunta';
+    document.getElementById('questionId').value = '';
+    document.getElementById('questionTitle').value = '';
+    
+    // Limpar opções
+    document.querySelectorAll('input[name^="options["]').forEach(input => input.value = '');
+    
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('questionForm').style.display = 'block';
+  }
+
+  // Cancelar formulário
+  function cancelQuestionForm() {
+    document.getElementById('questionForm').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+  }
+
+  // Salvar pergunta
+  document.getElementById('questionEditForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    await saveQuestion(false);
+  });
+
+  // Função para salvar pergunta
+  async function saveQuestion(reloadPage = false) {
+    const form = document.getElementById('questionEditForm');
+    const formData = new FormData(form);
+    const questionId = formData.get('id');
+    const title = formData.get('title');
+    const options = {
+      a: formData.get('options[a]'),
+      b: formData.get('options[b]'),
+      c: formData.get('options[c]'),
+      d: formData.get('options[d]')
+    };
+    
+    try {
+      const url = questionId ? '/admin/questions/update' : '/admin/questions';
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: questionId || null,
+          title,
+          options
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        if (reloadPage) {
+          window.location.reload();
+        } else {
+          alert('Pergunta salva com sucesso!');
+          loadQuestions();
+          cancelQuestionForm();
+        }
+      } else {
+        alert('Erro: ' + data.message);
+      }
+    } catch (error) {
+      alert('Erro de conexão: ' + error.message);
+    }
+  }
+
+  // Função para salvar e aplicar (recarregar página)
+  async function saveAndApply() {
+    await saveQuestion(true);
+  }
+
+  // Toggle pergunta
+  async function toggleQuestion(id) {
+    if (!confirm('Deseja alterar o status desta pergunta?')) return;
+    
+    try {
+      const response = await fetch('/admin/questions/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        loadQuestions();
+      } else {
+        alert('Erro: ' + data.message);
+      }
+    } catch (error) {
+      alert('Erro de conexão: ' + error.message);
+    }
+  }
+
+  // Excluir pergunta
+  async function deleteQuestion(id) {
+    if (!confirm('Tem certeza que deseja excluir esta pergunta?')) return;
+    
+    try {
+      const response = await fetch('/admin/questions/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        alert('Pergunta excluída com sucesso!');
+        loadQuestions();
+      } else {
+        alert('Erro: ' + data.message);
+      }
+    } catch (error) {
+      alert('Erro de conexão: ' + error.message);
+    }
+  }
+
+  // Logout
+  async function logoutAdmin() {
+    try {
+      await fetch('/admin/logout', { method: 'POST' });
+      isAdminLoggedIn = false;
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('questionForm').style.display = 'none';
+    } catch (error) {
+      console.error('Erro no logout:', error);
+    }
+  }
+
+  // Fechar modal ao clicar fora
+  window.onclick = function(event) {
+    const modal = document.getElementById('adminModal');
+    if (event.target === modal) {
+      closeAdminModal();
+    }
+  }
+  </script>
+</body>
+</html>

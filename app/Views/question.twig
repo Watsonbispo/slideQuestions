@@ -1,0 +1,57 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+  <div class="muted">Pergunta {{ number }} de {{ total }}</div>
+  <h1>{{ question.title }}</h1>
+
+  <form method="post" action="{{ nextPost }}" autocomplete="off" id="question-form">
+    <div class="options">
+      {% for opt in question.options %}
+        <label>
+          <input type="radio" name="answer" value="{{ opt.id }}"> {{ opt.text }}
+        </label>
+      {% endfor %}
+    </div>
+
+    <div class="row">
+      {% if prevLink %}
+        <a href="{{ prevLink }}">Anterior</a>
+      {% endif %}
+      <a href="/restart">Reiniciar</a>
+      <button class="primary" id="submit-btn" disabled>Responder</button>
+    </div>
+  </form>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  try {
+    var navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
+    if (navEntries && navEntries.length && navEntries[0].type === 'reload') {
+      window.location.replace('/q/1');
+    }
+  } catch (e) {}
+
+  if (window.performance && window.performance.navigation && window.performance.navigation.type === 2) {
+  }
+
+  (function() {
+    const form = document.getElementById('question-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const radioButtons = Array.from(form.querySelectorAll('input[type="radio"]'));
+
+    // Clear any pre-selected radio buttons
+    radioButtons.forEach(rb => rb.checked = false);
+    submitBtn.disabled = true;
+
+    function updateButton() {
+      const anySelected = radioButtons.some(rb => rb.checked);
+      submitBtn.disabled = !anySelected;
+    }
+
+    radioButtons.forEach(rb => rb.addEventListener('change', updateButton));
+  })();
+</script>
+
+{% endblock %}

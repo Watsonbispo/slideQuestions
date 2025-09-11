@@ -1,0 +1,43 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Cache and logs
+/storage/cache/
+/storage/logs/
+*.log
+server.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Database files (if using SQLite)
+*.db
+*.sqlite
+
+# Backup files
+*.bak
+*.backup
+
+# Composer
+composer.phar
+
+# PHP
+*.php~

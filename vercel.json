@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "public/index.php",
+      "use": "@vercel/php"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "public/index.php"
+    }
+  ],
+  "env": {
+    "DB_HOST": "127.0.0.1",
+    "DB_PORT": "3306",
+    "DB_NAME": "projectslides",
+    "DB_USER": "DaviSena",
+    "DB_PASS": "197508"
+  }
+}
