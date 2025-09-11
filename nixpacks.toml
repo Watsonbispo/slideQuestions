@@ -5,7 +5,11 @@ nixPkgs = ["php", "phpPackages.composer"]
 cmds = ["composer install --no-dev --optimize-autoloader"]
 
 [phases.build]
-cmds = ["echo 'Build completed'"]
+cmds = [
+  "echo 'Build completed'",
+  "php -r \"echo 'Setting up database...' . PHP_EOL;\"",
+  "php -r \"\\$pdo = new PDO('mysql:host=' . getenv('MYSQLHOST') . ';port=' . getenv('MYSQLPORT') . ';dbname=' . getenv('MYSQLDATABASE'), getenv('MYSQLUSER'), getenv('MYSQLPASSWORD')); \\$sql = file_get_contents('database/schema.sql'); \\$statements = explode(';', \\$sql); foreach(\\$statements as \\$stmt) { if(trim(\\$stmt)) { \\$pdo->exec(\\$stmt); } } echo 'Database setup completed!' . PHP_EOL;\""
+]
 
 [start]
 cmd = "php -S 0.0.0.0:$PORT -t public"
