@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
               'X-Requested-With': 'XMLHttpRequest'
             }
-          });
+          }).then(res => res.text());
         } else if (response.ok) {
           return response.text();
         } else {
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
               headers: {
                 'X-Requested-With': 'XMLHttpRequest'
               }
-            });
+            }).then(res => res.text());
           } else if (response.ok) {
             return response.text();
           } else {
