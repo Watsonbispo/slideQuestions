@@ -3,12 +3,12 @@
 echo "Configurando banco de dados...<br>";
 
 try {
-    // Conecta ao banco usando as variáveis do Railway (já disponíveis no ambiente)
-    $host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-    $port = getenv('MYSQLPORT') ?: '3306';
-    $dbname = getenv('MYSQLDATABASE') ?: 'railway';
-    $user = getenv('MYSQLUSER') ?: 'root';
-    $password = getenv('MYSQLPASSWORD') ?: '';
+    // Conecta ao banco usando as credenciais do Railway
+    $host = 'mysql.railway.internal';
+    $port = '3306';
+    $dbname = 'railway';
+    $user = 'root';
+    $password = 'zNlMpRCrhKRCXTnYiCQguZVyoaSEHLQz';
     
     echo "Conectando ao banco: {$host}:{$port}/{$dbname}<br>";
     
