@@ -6,8 +6,7 @@ cmds = ["composer install --no-dev --optimize-autoloader"]
 
 [phases.build]
 cmds = [
-  "echo 'Build completed'",
-  "php setup-database.php"
+  "echo 'Build completed'"
 ]
 
 [start]

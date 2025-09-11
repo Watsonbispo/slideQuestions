@@ -25,6 +25,16 @@ header('Referrer-Policy: strict-origin-when-cross-origin');
 // CSP temporariamente desabilitado para debug
 // header('Content-Security-Policy: default-src \'self\'; script-src \'self\' \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data:; font-src \'self\';');
 
+// Rota para setup do banco (apenas para Railway)
+Router::get('/setup-database', function() {
+    if (getenv('RAILWAY_ENVIRONMENT')) {
+        include __DIR__ . '/../setup-database.php';
+    } else {
+        http_response_code(404);
+        echo 'Not found';
+    }
+});
+
 // Rotas públicas
 Router::get('/', [QuestionController::class, 'root']);
 Router::get('/q/{n}', [QuestionController::class, 'show']);
