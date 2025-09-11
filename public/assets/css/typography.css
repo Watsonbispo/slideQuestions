@@ -1,0 +1,111 @@
+/* Typography Improvements for ProjectSlides */
+
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Question Title Styling */
+h1 {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  font-size: 2.8rem !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.03em !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  margin: 0 0 32px 0 !important;
+  text-align: center !important;
+  color: var(--fg) !important;
+}
+
+/* Question Counter */
+.muted {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: var(--muted) !important;
+  margin-bottom: 16px !important;
+  display: block !important;
+  text-align: center !important;
+}
+
+/* Options Styling */
+.options label {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  font-size: 1.2rem !important;
+  font-weight: 500 !important;
+  line-height: 1.6 !important;
+  letter-spacing: -0.01em !important;
+  padding: 24px 28px !important;
+  gap: 18px !important;
+}
+
+/* Radio Button Styling */
+.options input[type="radio"] {
+  width: 22px !important;
+  height: 22px !important;
+  accent-color: var(--primary) !important;
+  margin: 0 !important;
+}
+
+/* Button Styling */
+.row a, .row button {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.2rem !important;
+    margin: 0 0 24px 0 !important;
+  }
+  
+  .muted {
+    font-size: 1rem !important;
+  }
+  
+  .options label {
+    font-size: 1.1rem !important;
+    padding: 20px 24px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.9rem !important;
+    margin: 0 0 20px 0 !important;
+  }
+  
+  .options label {
+    font-size: 1.05rem !important;
+    padding: 18px 20px !important;
+  }
+}
+
+/* Admin Panel Typography */
+.modal-content h2 {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.modal-content label {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  font-weight: 600 !important;
+}
+
+.modal-content input, .modal-content textarea {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  font-weight: 400 !important;
+}
+
+/* Question List in Admin */
+.question-header h4 {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 1.2rem !important;
+  line-height: 1.5 !important;
+  letter-spacing: -0.01em !important;
+}
