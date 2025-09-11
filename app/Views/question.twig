@@ -74,8 +74,14 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .then(response => {
         if (response.redirected) {
-          // Follow redirect to next question
-          return fetch(response.url, {
+          // Follow redirect to next question or end page
+          const redirectUrl = response.url;
+          if (redirectUrl.includes('/end')) {
+            // If redirecting to end page, do full page reload
+            window.location.href = redirectUrl;
+            return;
+          }
+          return fetch(redirectUrl, {
             method: 'GET',
             headers: {
               'X-Requested-With': 'XMLHttpRequest'
@@ -103,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.style.opacity = '1';
         container.classList.remove('fade-out');
       });
-    }, 300);
+    }, 150);
   });
   
   function initializeForm() {
@@ -156,8 +162,14 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
           if (response.redirected) {
-            // Follow redirect to next question
-            return fetch(response.url, {
+            // Follow redirect to next question or end page
+            const redirectUrl = response.url;
+            if (redirectUrl.includes('/end')) {
+              // If redirecting to end page, do full page reload
+              window.location.href = redirectUrl;
+              return;
+            }
+            return fetch(redirectUrl, {
               method: 'GET',
               headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -185,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
           newSubmitBtn.style.opacity = '1';
           newContainer.classList.remove('fade-out');
         });
-      }, 300);
+      }, 150);
     });
   }
 });
