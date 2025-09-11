@@ -28,17 +28,19 @@
 
 {% block scripts %}
 <script>
-  try {
-    var navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
-    if (navEntries && navEntries.length && navEntries[0].type === 'reload') {
-      window.location.replace('/q/1');
+  // Wait for DOM to be ready
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      var navEntries = performance.getEntriesByType && performance.getEntriesByType('navigation');
+      if (navEntries && navEntries.length && navEntries[0].type === 'reload') {
+        window.location.replace('/q/1');
+      }
+    } catch (e) {}
+
+    if (window.performance && window.performance.navigation && window.performance.navigation.type === 2) {
     }
-  } catch (e) {}
 
-  if (window.performance && window.performance.navigation && window.performance.navigation.type === 2) {
-  }
-
-  (function() {
+    (function() {
     const form = document.getElementById('question-form');
     const submitBtn = document.getElementById('submit-btn');
     const radioButtons = Array.from(form.querySelectorAll('input[type="radio"]'));
@@ -136,7 +138,8 @@
       
       newRadioButtons.forEach(rb => rb.addEventListener('change', updateButton));
     }
-  })();
+    })();
+  }); // End DOMContentLoaded
 </script>
 
 {% endblock %}
