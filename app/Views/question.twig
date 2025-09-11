@@ -89,14 +89,14 @@
             return response.text();
           }
         })
+        .catch(error => {
+          console.error('Error:', error);
+          // Re-enable form on error
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Responder';
+          submitBtn.style.opacity = '1';
+        });
       }, 300); // Wait for fade out animation
-      .catch(error => {
-        console.error('Error:', error);
-        // Re-enable form on error
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Responder';
-        submitBtn.style.opacity = '1';
-      });
     });
   })();
 </script>
