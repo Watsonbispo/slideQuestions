@@ -58,14 +58,13 @@
 
     radioButtons.forEach(rb => rb.addEventListener('change', updateButton));
 
-    // Handle form submission with smooth transition
+    // Handle form submission with AJAX
     form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
       const selectedAnswer = form.querySelector('input[name="answer"]:checked');
       
-      if (!selectedAnswer) {
-        e.preventDefault();
-        return;
-      }
+      if (!selectedAnswer) return;
       
       // Disable form during submission
       submitBtn.disabled = true;
@@ -75,11 +74,68 @@
       // Add fade out effect
       container.classList.add('fade-out');
       
-      // Let the form submit naturally after fade out
+      // Submit form data after fade out
       setTimeout(() => {
-        // Form will submit normally, no preventDefault
+        const formData = new FormData(form);
+        
+        fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => {
+          if (response.redirected) {
+            // Navigate to the next question without full page reload
+            window.location.href = response.url;
+          } else if (response.ok) {
+            // If response is OK, get the new content
+            return response.text();
+          } else {
+            throw new Error('Network response was not ok');
+          }
+        })
+        .then(html => {
+          if (html) {
+            // Update the page content
+            document.body.innerHTML = html;
+            // Re-initialize the form handlers
+            initializeForm();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Re-enable form on error
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Responder';
+          submitBtn.style.opacity = '1';
+          container.classList.remove('fade-out');
+        });
       }, 300);
     });
+    
+    function initializeForm() {
+      const newForm = document.getElementById('question-form');
+      const newSubmitBtn = document.getElementById('submit-btn');
+      const newRadioButtons = Array.from(newForm.querySelectorAll('input[type="radio"]'));
+      const newContainer = document.getElementById('question-container');
+      
+      if (newContainer) {
+        newContainer.classList.add('fade-in');
+      }
+      
+      // Clear any pre-selected radio buttons
+      newRadioButtons.forEach(rb => rb.checked = false);
+      newSubmitBtn.disabled = true;
+      
+      function updateButton() {
+        const anySelected = newRadioButtons.some(rb => rb.checked);
+        newSubmitBtn.disabled = !anySelected;
+      }
+      
+      newRadioButtons.forEach(rb => rb.addEventListener('change', updateButton));
+    }
   })();
 </script>
 
