@@ -14,6 +14,12 @@ if (is_file(__DIR__ . '/../.env')) {
     $dotenv->load();
 }
 
+// Load Railway environment variables if available
+if (getenv('RAILWAY_ENVIRONMENT')) {
+    // Railway automatically provides these environment variables
+    // No additional loading needed
+}
+
 // Headers de segurança
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Cache-Control: post-check=0, pre-check=0', false);

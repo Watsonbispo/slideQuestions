@@ -16,16 +16,12 @@ final class Database
             return self::$connection;
         }
 
-        $driver = 'mysql';
-        $host = '127.0.0.1';
-        $port = '3306';
-        $name = 'projectslides';
-        $user = 'DaviSena';
-        $pass = '197508';
-
-        if ($driver !== 'mysql') {
-            throw new PDOException('Only mysql driver is supported in this configuration.');
-        }
+        // Configurações para Railway (variáveis de ambiente)
+        $host = $_ENV['MYSQLHOST'] ?? $_ENV['DB_HOST'] ?? '127.0.0.1';
+        $port = $_ENV['MYSQLPORT'] ?? $_ENV['DB_PORT'] ?? '3306';
+        $name = $_ENV['MYSQLDATABASE'] ?? $_ENV['DB_NAME'] ?? 'projectslides';
+        $user = $_ENV['MYSQLUSER'] ?? $_ENV['DB_USER'] ?? 'DaviSena';
+        $pass = $_ENV['MYSQLPASSWORD'] ?? $_ENV['DB_PASS'] ?? '197508';
 
         $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', $host, $port, $name);
         $options = [
@@ -34,8 +30,13 @@ final class Database
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
 
-        self::$connection = new PDO($dsn, $user, $pass, $options);
-        return self::$connection;
+        try {
+            self::$connection = new PDO($dsn, $user, $pass, $options);
+            return self::$connection;
+        } catch (PDOException $e) {
+            error_log('Database connection error: ' . $e->getMessage());
+            throw new PDOException('Falha na conexão com o banco de dados: ' . $e->getMessage());
+        }
     }
 }
 
