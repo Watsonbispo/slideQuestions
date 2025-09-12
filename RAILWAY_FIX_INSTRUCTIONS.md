@@ -63,3 +63,4 @@ Certifique-se de que estas variáveis estão configuradas no Railway:
 - O arquivo `test-admin.php` pode ser removido após confirmar que tudo está funcionando
 - As transições foram removidas apenas dos cards de perguntas, mantendo outras funcionalidades
 - O sistema agora está preparado para funcionar tanto localmente quanto no Railway
+

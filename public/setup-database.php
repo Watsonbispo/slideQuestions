@@ -3,14 +3,21 @@
 echo "Configurando banco de dados...<br>";
 
 try {
-    // Conecta ao banco usando as credenciais do Railway
-    $host = 'mysql.railway.internal';
-    $port = '3306';
-    $dbname = 'railway';
-    $user = 'root';
-    $password = 'zNlMpRCrhKRCXTnYiCQguZVyoaSEHLQz';
+    // Carrega variáveis de ambiente
+    if (is_file(__DIR__ . '/../.env')) {
+        $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+        $dotenv->load();
+    }
+    
+    // Conecta ao banco usando as variáveis de ambiente do Railway
+    $host = $_ENV['MYSQLHOST'] ?? $_ENV['DB_HOST'] ?? 'mysql.railway.internal';
+    $port = $_ENV['MYSQLPORT'] ?? $_ENV['DB_PORT'] ?? '3306';
+    $dbname = $_ENV['MYSQLDATABASE'] ?? $_ENV['DB_NAME'] ?? 'railway';
+    $user = $_ENV['MYSQLUSER'] ?? $_ENV['DB_USER'] ?? 'root';
+    $password = $_ENV['MYSQLPASSWORD'] ?? $_ENV['DB_PASS'] ?? '';
     
     echo "Conectando ao banco: {$host}:{$port}/{$dbname}<br>";
+    echo "Usuário: {$user}<br>";
     
     $pdo = new PDO(
         "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4",
