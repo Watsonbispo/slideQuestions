@@ -71,7 +71,8 @@ final class Database
                     
                     return self::$connection;
                     
-                } elseif ($config['host'] && $config['name'] && $config['user']) {
+                } elseif (isset($config['host']) && isset($config['name']) && isset($config['user']) && 
+                          $config['host'] && $config['name'] && $config['user']) {
                     // Tentar conexão normal
                     $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', 
                         $config['host'], $config['port'], $config['name']);
