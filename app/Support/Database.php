@@ -16,12 +16,17 @@ final class Database
             return self::$connection;
         }
 
-        // Configurações para Railway (variáveis de ambiente)
+        // Configurações para Railway (variáveis de ambiente) ou local
         $host = $_ENV['MYSQLHOST'] ?? $_ENV['DB_HOST'] ?? '127.0.0.1';
         $port = $_ENV['MYSQLPORT'] ?? $_ENV['DB_PORT'] ?? '3306';
         $name = $_ENV['MYSQLDATABASE'] ?? $_ENV['DB_NAME'] ?? 'projectslides';
         $user = $_ENV['MYSQLUSER'] ?? $_ENV['DB_USER'] ?? 'DaviSena';
         $pass = $_ENV['MYSQLPASSWORD'] ?? $_ENV['DB_PASS'] ?? '197508';
+        
+        // Debug para desenvolvimento
+        if (getenv('APP_ENV') === 'development' || !getenv('RAILWAY_ENVIRONMENT')) {
+            error_log("Database config - Host: {$host}, Port: {$port}, DB: {$name}, User: {$user}");
+        }
 
         $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', $host, $port, $name);
         $options = [
