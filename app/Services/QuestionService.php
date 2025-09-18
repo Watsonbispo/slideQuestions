@@ -112,7 +112,7 @@ final class QuestionService
                 VALUES (:title, (SELECT COALESCE(MAX(sort_order), 0) + 1 FROM questions q))
             ');
             $stmt->execute([':title' => $title]);
-            $questionId = $pdo->lastInsertId();
+            $questionId = (int)$pdo->lastInsertId();
 
             // Inserir opções
             $this->insertQuestionOptions($pdo, $questionId, $options);
