@@ -749,33 +749,43 @@
   }
 
   // Login administrativo
-  document.getElementById('adminLoginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const username = document.getElementById('adminUsername').value;
-    const password = document.getElementById('adminPassword').value;
-    
-    try {
-      const response = await fetch('/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password })
+  document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('adminLoginForm');
+    if (loginForm) {
+      loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('adminUsername').value;
+        const password = document.getElementById('adminPassword').value;
+        
+        try {
+          const response = await fetch('/admin/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            isAdminLoggedIn = true;
+            const loginFormDiv = document.getElementById('loginForm');
+            const adminPanelDiv = document.getElementById('adminPanel');
+            
+            if (loginFormDiv) loginFormDiv.style.display = 'none';
+            if (adminPanelDiv) {
+              adminPanelDiv.style.display = 'block';
+              loadQuestions();
+            }
+          } else {
+            alert('Erro: ' + data.message);
+          }
+        } catch (error) {
+          alert('Erro de conexão: ' + error.message);
+        }
       });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        isAdminLoggedIn = true;
-        document.getElementById('loginForm').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'block';
-        loadQuestions();
-      } else {
-        alert('Erro: ' + data.message);
-      }
-    } catch (error) {
-      alert('Erro de conexão: ' + error.message);
     }
   });
 
