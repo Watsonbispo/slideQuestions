@@ -53,6 +53,8 @@ Router::post('/admin/questions/update', [AdminController::class, 'updateQuestion
 Router::post('/admin/questions/delete', [AdminController::class, 'deleteQuestion']);
 Router::post('/admin/questions/toggle', [AdminController::class, 'toggleQuestion']);
 Router::get('/admin/csrf-token', [AdminController::class, 'getCsrfToken']);
+Router::get('/admin/redirect-url', [AdminController::class, 'getRedirectUrl']);
+Router::post('/admin/redirect-url', [AdminController::class, 'updateRedirectUrl']);
 
 try {
     Router::start();

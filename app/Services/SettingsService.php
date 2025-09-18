@@ -24,6 +24,39 @@ final class SettingsService
         // Fallback for current default image path
         return '/assets/imgs/590f67723c50604dd9ab22d6dd30c9ba.jpg';
     }
+
+    public function getRedirectUrl(): string
+    {
+        try {
+            $pdo = Database::getConnection();
+            $stmt = $pdo->prepare('SELECT `value` FROM settings WHERE `key` = :k LIMIT 1');
+            $stmt->execute([':k' => 'redirect_url']);
+            $value = $stmt->fetchColumn();
+            if (is_string($value) && $value !== '') {
+                return $value;
+            }
+        } catch (\Throwable $e) {
+            // Fallback silently if DB is not ready
+        }
+
+        // Fallback for default redirect URL
+        return 'https://example.com/checkout/ABC123';
+    }
+
+    public function updateRedirectUrl(string $url): bool
+    {
+        try {
+            $pdo = Database::getConnection();
+            $stmt = $pdo->prepare('INSERT INTO settings (`key`, `value`) VALUES (:k, :v) ON DUPLICATE KEY UPDATE `value` = :v');
+            return $stmt->execute([
+                ':k' => 'redirect_url',
+                ':v' => $url
+            ]);
+        } catch (\Throwable $e) {
+            error_log('Error updating redirect URL: ' . $e->getMessage());
+            return false;
+        }
+    }
 }
 
 

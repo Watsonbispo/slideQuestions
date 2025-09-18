@@ -5,16 +5,19 @@ namespace App\Controllers;
 
 use App\Services\AuthService;
 use App\Services\QuestionService;
+use App\Services\SettingsService;
 
 final class AdminController
 {
     private AuthService $auth;
     private QuestionService $questions;
+    private SettingsService $settings;
 
     public function __construct()
     {
         $this->auth = new AuthService();
         $this->questions = new QuestionService();
+        $this->settings = new SettingsService();
     }
 
     public function login(): void
@@ -203,5 +206,60 @@ final class AdminController
     {
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'csrf_token' => 'disabled']);
+    }
+
+    public function getRedirectUrl(): void
+    {
+        header('Content-Type: application/json');
+        
+        if (!$this->auth->isLoggedIn()) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Não autorizado']);
+            return;
+        }
+
+        $url = $this->settings->getRedirectUrl();
+        echo json_encode(['success' => true, 'redirect_url' => $url]);
+    }
+
+    public function updateRedirectUrl(): void
+    {
+        header('Content-Type: application/json');
+        
+        if (!$this->auth->isLoggedIn()) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Não autorizado']);
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Método não permitido']);
+            return;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $url = trim($input['redirect_url'] ?? '');
+        
+        if (empty($url)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'URL de redirecionamento é obrigatória']);
+            return;
+        }
+
+        // Validar URL
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'URL inválida']);
+            return;
+        }
+
+        $result = $this->settings->updateRedirectUrl($url);
+        if ($result) {
+            echo json_encode(['success' => true, 'message' => 'URL de redirecionamento atualizada com sucesso']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Erro ao atualizar URL de redirecionamento']);
+        }
     }
 }

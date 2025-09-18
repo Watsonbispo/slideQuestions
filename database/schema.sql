@@ -48,7 +48,8 @@ INSERT INTO admins (username, password_hash) VALUES
 
 -- Inserir configurações padrão
 INSERT INTO settings (`key`, `value`) VALUES 
-('background_image_path', '/assets/imgs/590f67723c50604dd9ab22d6dd30c9ba.jpg');
+('background_image_path', '/assets/imgs/590f67723c50604dd9ab22d6dd30c9ba.jpg'),
+('redirect_url', 'https://example.com/checkout/ABC123');
 
 -- Inserir perguntas padrão
 INSERT INTO questions (title, sort_order) VALUES 

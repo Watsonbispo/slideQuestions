@@ -71,7 +71,7 @@ final class QuestionController
 
     public function end(): void
     {
-        $purchaseUrl = 'https://example.com/checkout/ABC123';
+        $purchaseUrl = $this->settings->getRedirectUrl();
         echo $this->twig->render('end.twig', [
             'purchaseUrl' => $purchaseUrl,
             'backgroundUrl' => $this->settings->getBackgroundUrl(),

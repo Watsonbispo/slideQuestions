@@ -669,6 +669,7 @@
       <div id="adminPanel" class="admin-section" style="display: none;">
         <div class="admin-actions">
           <button onclick="showCreateQuestionForm()" class="btn-primary">Nova Pergunta</button>
+          <button onclick="showRedirectConfig()" class="btn-primary">Configurar Redirecionamento</button>
           <button onclick="logoutAdmin()" class="btn-secondary">Sair</button>
         </div>
         
@@ -710,6 +711,24 @@
           <div class="form-actions">
             <button type="submit" class="btn-primary">Salvar e Aplicar</button>
             <button type="button" onclick="cancelQuestionForm()" class="btn-secondary">Cancelar</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Redirect Configuration -->
+      <div id="redirectConfig" class="admin-section" style="display: none;">
+        <h3>Configuração de Redirecionamento</h3>
+        <p>Configure o link para onde os usuários serão redirecionados após completar o questionário.</p>
+        
+        <form id="redirectConfigForm">
+          <div class="form-group">
+            <label for="redirectUrl">URL de Redirecionamento:</label>
+            <input type="url" id="redirectUrl" name="redirect_url" placeholder="https://exemplo.com/checkout" required>
+            <small>Exemplo: https://exemplo.com/checkout/ABC123</small>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">Salvar URL</button>
+            <button type="button" onclick="cancelRedirectConfig()" class="btn-secondary">Cancelar</button>
           </div>
         </form>
       </div>
@@ -1024,6 +1043,61 @@
       console.error('Erro no logout:', error);
     }
   }
+
+  // Configuração de redirecionamento
+  function showRedirectConfig() {
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('redirectConfig').style.display = 'block';
+    loadRedirectUrl();
+  }
+
+  function cancelRedirectConfig() {
+    document.getElementById('redirectConfig').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+  }
+
+  async function loadRedirectUrl() {
+    try {
+      const response = await fetch('/admin/redirect-url');
+      const data = await response.json();
+      
+      if (data.success) {
+        document.getElementById('redirectUrl').value = data.redirect_url;
+      } else {
+        console.error('Erro ao carregar URL de redirecionamento:', data.message);
+      }
+    } catch (error) {
+      console.error('Erro de conexão:', error);
+    }
+  }
+
+  // Formulário de configuração de redirecionamento
+  document.getElementById('redirectConfigForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const url = document.getElementById('redirectUrl').value;
+    
+    try {
+      const response = await fetch('/admin/redirect-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ redirect_url: url })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        alert('URL de redirecionamento atualizada com sucesso!');
+        cancelRedirectConfig();
+      } else {
+        alert('Erro: ' + data.message);
+      }
+    } catch (error) {
+      alert('Erro de conexão: ' + error.message);
+    }
+  });
 
   // Fechar modal ao clicar fora
   window.onclick = function(event) {
