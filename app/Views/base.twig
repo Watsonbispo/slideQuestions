@@ -679,7 +679,7 @@
 
       <!-- Create/Edit Question Form -->
       <div id="questionForm" class="admin-section" style="display: none;">
-        <h3 id="formTitle">Nova Pergunta</h3>
+        <h3 id="formTitle">Nova Pergunta (Salvar e Aplicar)</h3>
         <form id="questionEditForm">
           <input type="hidden" id="questionId" name="id">
           <div class="form-group">
@@ -708,8 +708,7 @@
             </div>
           </div>
           <div class="form-actions">
-            <button type="submit" class="btn-primary">Salvar</button>
-            <button type="button" onclick="saveAndApply()" class="btn-primary">Aplicar</button>
+            <button type="submit" class="btn-primary">Salvar e Aplicar</button>
             <button type="button" onclick="cancelQuestionForm()" class="btn-secondary">Cancelar</button>
           </div>
         </form>
@@ -869,7 +868,7 @@
     const question = questions.find(q => q.id === id);
     if (!question) return;
     
-    document.getElementById('formTitle').textContent = 'Editar Pergunta';
+    document.getElementById('formTitle').textContent = 'Editar Pergunta (Salvar e Aplicar)';
     document.getElementById('questionId').value = question.id;
     document.getElementById('questionTitle').value = question.title;
     
@@ -885,7 +884,7 @@
 
   // Nova pergunta
   function showCreateQuestionForm() {
-    document.getElementById('formTitle').textContent = 'Nova Pergunta';
+    document.getElementById('formTitle').textContent = 'Nova Pergunta (Salvar e Aplicar)';
     document.getElementById('questionId').value = '';
     document.getElementById('questionTitle').value = '';
     
@@ -905,7 +904,7 @@
   // Salvar pergunta
   document.getElementById('questionEditForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    await saveQuestion(false);
+    await saveQuestion(true); // Sempre recarregar após salvar
   });
 
   // Função para salvar pergunta
@@ -939,6 +938,8 @@
       
       if (data.success) {
         if (reloadPage) {
+          // Fechar modal e recarregar página
+          closeAdminModal();
           window.location.reload();
         } else {
           alert('Pergunta salva com sucesso!');
@@ -953,10 +954,8 @@
     }
   }
 
-  // Função para salvar e aplicar (recarregar página)
-  async function saveAndApply() {
-    await saveQuestion(true);
-  }
+  // Função para salvar e aplicar (recarregar página) - REMOVIDA
+  // Todas as operações agora recarregam automaticamente
 
   // Toggle pergunta
   async function toggleQuestion(id) {
@@ -974,7 +973,9 @@
       const data = await response.json();
       
       if (data.success) {
-        loadQuestions();
+        // Recarregar página para atualizar contador de perguntas
+        closeAdminModal();
+        window.location.reload();
       } else {
         alert('Erro: ' + data.message);
       }
@@ -1000,7 +1001,9 @@
       
       if (data.success) {
         alert('Pergunta excluída com sucesso!');
-        loadQuestions();
+        // Recarregar página para atualizar contador de perguntas
+        closeAdminModal();
+        window.location.reload();
       } else {
         alert('Erro: ' + data.message);
       }
