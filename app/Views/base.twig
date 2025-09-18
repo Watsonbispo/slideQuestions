@@ -774,10 +774,18 @@
             const loginFormDiv = document.getElementById('loginForm');
             const adminPanelDiv = document.getElementById('adminPanel');
             
-            if (loginFormDiv) loginFormDiv.style.display = 'none';
+            console.log('Login successful, switching to admin panel');
+            
+            if (loginFormDiv) {
+              loginFormDiv.style.display = 'none';
+              console.log('Login form hidden');
+            }
             if (adminPanelDiv) {
               adminPanelDiv.style.display = 'block';
+              console.log('Admin panel shown');
               loadQuestions();
+            } else {
+              console.error('Admin panel element not found!');
             }
           } else {
             alert('Erro: ' + data.message);
@@ -791,27 +799,48 @@
 
   // Carregar perguntas
   async function loadQuestions() {
+    console.log('Loading questions...');
     try {
       const response = await fetch('/admin/questions');
+      console.log('Questions response status:', response.status);
+      
       const data = await response.json();
+      console.log('Questions data:', data);
       
       if (data.success) {
         questions = data.questions;
+        console.log('Questions loaded:', questions.length);
         renderQuestions();
       } else {
+        console.error('Error loading questions:', data.message);
         alert('Erro ao carregar perguntas: ' + data.message);
       }
     } catch (error) {
+      console.error('Connection error:', error);
       alert('Erro de conexão: ' + error.message);
     }
   }
 
   // Renderizar lista de perguntas
   function renderQuestions() {
+    console.log('Rendering questions...');
     const container = document.getElementById('questionsList');
-    container.innerHTML = '';
     
-    questions.forEach(question => {
+    if (!container) {
+      console.error('Questions container not found!');
+      return;
+    }
+    
+    container.innerHTML = '';
+    console.log('Questions to render:', questions.length);
+    
+    if (questions.length === 0) {
+      container.innerHTML = '<p>Nenhuma pergunta encontrada.</p>';
+      return;
+    }
+    
+    questions.forEach((question, index) => {
+      console.log(`Rendering question ${index + 1}:`, question);
       const questionDiv = document.createElement('div');
       questionDiv.className = 'question-item';
       questionDiv.innerHTML = `
@@ -826,11 +855,13 @@
           </div>
         </div>
         <div class="question-options">
-          ${question.options.map(opt => `<span class="option-tag">${opt.id}: ${opt.text}</span>`).join('')}
+          ${question.options ? question.options.map(opt => `<span class="option-tag">${opt.id}: ${opt.text}</span>`).join('') : 'Sem opções'}
         </div>
       `;
       container.appendChild(questionDiv);
     });
+    
+    console.log('Questions rendered successfully');
   }
 
   // Editar pergunta

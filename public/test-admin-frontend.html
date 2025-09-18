@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Admin Frontend</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        .warning { color: orange; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>🔐 Teste Admin Frontend - Railway</h1>
+    
+    <div class="section">
+        <h2>1. Teste de Login</h2>
+        <input type="text" id="username" placeholder="Usuário" value="Davi Sena">
+        <input type="password" id="password" placeholder="Senha" value="197508">
+        <button onclick="testLogin()">Testar Login</button>
+        <div id="loginResult" class="log"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. Teste de Carregar Perguntas</h2>
+        <button onclick="testLoadQuestions()">Carregar Perguntas</button>
+        <div id="questionsResult" class="log"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Teste de Token CSRF</h2>
+        <button onclick="testCsrfToken()">Carregar Token CSRF</button>
+        <div id="csrfResult" class="log"></div>
+    </div>
+    
+    <div class="section">
+        <h2>4. Logs de Debug</h2>
+        <button onclick="clearLogs()">Limpar Logs</button>
+        <div id="debugLogs" class="log"></div>
+    </div>
+
+    <script>
+        let isLoggedIn = false;
+        let csrfToken = '';
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('debugLogs');
+            const color = type === 'error' ? 'red' : type === 'success' ? 'green' : type === 'warning' ? 'orange' : 'blue';
+            logDiv.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            console.log(`[${timestamp}] ${message}`);
+        }
+        
+        function clearLogs() {
+            document.getElementById('debugLogs').innerHTML = '';
+        }
+        
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('loginResult');
+            
+            log(`Tentando login com: ${username}`, 'info');
+            
+            try {
+                const response = await fetch('/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                log(`Response status: ${response.status}`, 'info');
+                
+                const data = await response.json();
+                log(`Response data: ${JSON.stringify(data)}`, 'info');
+                
+                if (data.success) {
+                    isLoggedIn = true;
+                    resultDiv.innerHTML = `<div class="success">✅ Login realizado com sucesso!</div>`;
+                    log('Login realizado com sucesso!', 'success');
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Erro: ${data.message}</div>`;
+                    log(`Erro no login: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Erro de conexão: ${error.message}</div>`;
+                log(`Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testLoadQuestions() {
+            const resultDiv = document.getElementById('questionsResult');
+            
+            if (!isLoggedIn) {
+                resultDiv.innerHTML = `<div class="warning">⚠️ Faça login primeiro!</div>`;
+                log('Tentativa de carregar perguntas sem estar logado', 'warning');
+                return;
+            }
+            
+            log('Carregando perguntas...', 'info');
+            
+            try {
+                const response = await fetch('/admin/questions');
+                log(`Questions response status: ${response.status}`, 'info');
+                
+                const data = await response.json();
+                log(`Questions data: ${JSON.stringify(data)}`, 'info');
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `<div class="success">✅ ${data.questions.length} perguntas carregadas!</div>`;
+                    log(`Perguntas carregadas: ${data.questions.length}`, 'success');
+                    
+                    // Mostrar detalhes das perguntas
+                    data.questions.forEach((q, i) => {
+                        log(`Pergunta ${i + 1}: ${q.title} (ID: ${q.id}, Ativa: ${q.is_active})`, 'info');
+                    });
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Erro: ${data.message}</div>`;
+                    log(`Erro ao carregar perguntas: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Erro de conexão: ${error.message}</div>`;
+                log(`Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testCsrfToken() {
+            const resultDiv = document.getElementById('csrfResult');
+            
+            log('Carregando token CSRF...', 'info');
+            
+            try {
+                const response = await fetch('/admin/csrf-token');
+                log(`CSRF response status: ${response.status}`, 'info');
+                
+                const data = await response.json();
+                log(`CSRF data: ${JSON.stringify(data)}`, 'info');
+                
+                if (data.success) {
+                    csrfToken = data.csrf_token;
+                    resultDiv.innerHTML = `<div class="success">✅ Token CSRF carregado: ${csrfToken}</div>`;
+                    log(`Token CSRF carregado: ${csrfToken}`, 'success');
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Erro: ${data.message}</div>`;
+                    log(`Erro ao carregar token CSRF: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Erro de conexão: ${error.message}</div>`;
+                log(`Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+        
+        // Teste automático ao carregar a página
+        window.onload = function() {
+            log('Página carregada, iniciando testes automáticos...', 'info');
+            testCsrfToken();
+        };
+    </script>
+</body>
+</html>
