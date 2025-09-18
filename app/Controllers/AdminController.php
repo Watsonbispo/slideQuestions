@@ -241,7 +241,12 @@ final class AdminController
         $input = json_decode(file_get_contents('php://input'), true);
         $url = trim($input['redirect_url'] ?? '');
         
+        // Debug logging
+        error_log('Redirect URL update attempt - Input: ' . json_encode($input));
+        error_log('Redirect URL update attempt - URL: ' . $url);
+        
         if (empty($url)) {
+            error_log('Redirect URL update failed - Empty URL');
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'URL de redirecionamento é obrigatória']);
             return;
@@ -249,12 +254,15 @@ final class AdminController
 
         // Validar URL
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            error_log('Redirect URL update failed - Invalid URL: ' . $url);
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => 'URL inválida']);
             return;
         }
 
         $result = $this->settings->updateRedirectUrl($url);
+        error_log('Redirect URL update result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+        
         if ($result) {
             echo json_encode(['success' => true, 'message' => 'URL de redirecionamento atualizada com sucesso']);
         } else {
