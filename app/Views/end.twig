@@ -21,7 +21,15 @@
 
 {% block scripts %}
 <script>
+  // Parar a animação após 1 segundo e redirecionar
   setTimeout(function(){
+    // Parar a animação
+    const spinner = document.querySelector('.spinner');
+    if (spinner) {
+      spinner.style.animation = 'none';
+    }
+    
+    // Redirecionar
     window.location.replace('{{ purchaseUrl }}');
   }, 1000);
 </script>

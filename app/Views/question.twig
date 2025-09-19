@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Handle form submission with AJAX (SPA behavior)
+  // Handle form submission - redirect immediately
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     
@@ -53,133 +53,9 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn.disabled = true;
     submitBtn.style.opacity = '0.7';
     
-    // Submit form with AJAX immediately
-    const formData = new FormData(form);
-    
-    fetch(form.action, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    })
-    .then(response => {
-      if (response.redirected) {
-        // Follow redirect to next question or end page
-        const redirectUrl = response.url;
-        if (redirectUrl.includes('/end')) {
-          // If redirecting to end page, do full page reload
-          window.location.href = redirectUrl;
-          return;
-        }
-        return fetch(redirectUrl, {
-          method: 'GET',
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        }).then(res => res.text());
-      } else if (response.ok) {
-        return response.text();
-      } else {
-        throw new Error('Network response was not ok');
-      }
-    })
-    .then(html => {
-      if (html) {
-        // Update the page content without reload
-        document.body.innerHTML = html;
-        // Re-initialize the form handlers
-        initializeForm();
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      // Re-enable form on error
-      submitBtn.disabled = false;
-      submitBtn.style.opacity = '1';
-    });
+    // Submit form directly - let browser handle redirect
+    form.submit();
   });
-  
-  function initializeForm() {
-    const newForm = document.getElementById('question-form');
-    const newSubmitBtn = document.getElementById('submit-btn');
-    const newRadioButtons = document.querySelectorAll('input[type="radio"]');
-    const newContainer = document.getElementById('question-container');
-    
-    if (newContainer) {
-      newContainer.classList.add('fade-in');
-    }
-    
-    // Clear any pre-selected radio buttons
-    newRadioButtons.forEach(rb => rb.checked = false);
-    newSubmitBtn.disabled = true;
-    
-    // Enable/disable button based on selection
-    newRadioButtons.forEach(rb => {
-      rb.addEventListener('change', function() {
-        const anySelected = Array.from(newRadioButtons).some(rb => rb.checked);
-        newSubmitBtn.disabled = !anySelected;
-      });
-    });
-    
-    // Re-attach form submission handler
-    newForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const selectedAnswer = newForm.querySelector('input[name="answer"]:checked');
-      if (!selectedAnswer) return;
-      
-      // Disable form during submission
-      newSubmitBtn.disabled = true;
-      newSubmitBtn.style.opacity = '0.7';
-      
-      // Submit form with AJAX immediately
-      const formData = new FormData(newForm);
-      
-      fetch(newForm.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      })
-      .then(response => {
-        if (response.redirected) {
-          // Follow redirect to next question or end page
-          const redirectUrl = response.url;
-          if (redirectUrl.includes('/end')) {
-            // If redirecting to end page, do full page reload
-            window.location.href = redirectUrl;
-            return;
-          }
-          return fetch(redirectUrl, {
-            method: 'GET',
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest'
-            }
-          }).then(res => res.text());
-        } else if (response.ok) {
-          return response.text();
-        } else {
-          throw new Error('Network response was not ok');
-        }
-      })
-      .then(html => {
-        if (html) {
-          // Update the page content without reload
-          document.body.innerHTML = html;
-          // Re-initialize the form handlers
-          initializeForm();
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        // Re-enable form on error
-        newSubmitBtn.disabled = false;
-        newSubmitBtn.style.opacity = '1';
-      });
-    });
-  }
 });
 </script>
 {% endblock %}
