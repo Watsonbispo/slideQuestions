@@ -84,18 +84,39 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(html => {
       if (html) {
-        // Update page content
-        document.body.innerHTML = html;
-        
-        // Restaurar transição do card
-        const newCard = document.querySelector('.question-container');
-        if (newCard) {
-          newCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-          newCard.style.opacity = '1';
-          newCard.style.transform = 'scale(1)';
+        // Transição rápida para mascarar delay
+        const currentCard = document.querySelector('.question-container');
+        if (currentCard) {
+          // Card atual sai rapidamente
+          currentCard.style.transition = 'opacity 0.1s ease, transform 0.1s ease';
+          currentCard.style.opacity = '0';
+          currentCard.style.transform = 'translateY(-5px)';
+          
+          // Trocar conteúdo imediatamente
+          setTimeout(() => {
+            document.body.innerHTML = html;
+            
+            const newCard = document.querySelector('.question-container');
+            if (newCard) {
+              // Card novo entra rapidamente
+              newCard.style.opacity = '0';
+              newCard.style.transform = 'translateY(5px)';
+              newCard.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+              
+              // Entrar imediatamente
+              setTimeout(() => {
+                newCard.style.opacity = '1';
+                newCard.style.transform = 'translateY(0)';
+              }, 5);
+            }
+            
+            initializeForm();
+          }, 100);
+        } else {
+          // Fallback
+          document.body.innerHTML = html;
+          initializeForm();
         }
-        
-        initializeForm();
       }
     })
     .catch(error => {
@@ -164,17 +185,39 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .then(html => {
         if (html) {
-          document.body.innerHTML = html;
-          
-          // Restaurar transição do card
-          const newCard = document.querySelector('.question-container');
-          if (newCard) {
-            newCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            newCard.style.opacity = '1';
-            newCard.style.transform = 'scale(1)';
+          // Transição rápida para mascarar delay
+          const currentCard = document.querySelector('.question-container');
+          if (currentCard) {
+            // Card atual sai rapidamente
+            currentCard.style.transition = 'opacity 0.1s ease, transform 0.1s ease';
+            currentCard.style.opacity = '0';
+            currentCard.style.transform = 'translateY(-5px)';
+            
+            // Trocar conteúdo imediatamente
+            setTimeout(() => {
+              document.body.innerHTML = html;
+              
+              const newCard = document.querySelector('.question-container');
+              if (newCard) {
+                // Card novo entra rapidamente
+                newCard.style.opacity = '0';
+                newCard.style.transform = 'translateY(5px)';
+                newCard.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+                
+                // Entrar imediatamente
+                setTimeout(() => {
+                  newCard.style.opacity = '1';
+                  newCard.style.transform = 'translateY(0)';
+                }, 5);
+              }
+              
+              initializeForm();
+            }, 100);
+          } else {
+            // Fallback
+            document.body.innerHTML = html;
+            initializeForm();
           }
-          
-          initializeForm();
         }
       })
       .catch(error => {
