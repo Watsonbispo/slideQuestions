@@ -1,8 +1,8 @@
 {% extends 'base.twig' %}
 
 {% block content %}
-  <h1>Trazendo o seu resultado...</h1>
-  <div class="muted">Isso pode levar alguns segundos.</div>
+  <h1>Trazendo seus resultados...</h1>
+  <div class="muted">Aguarde um momento.</div>
   <div class="loader-wrap" aria-hidden="true">
     <div class="spinner"></div>
   </div>
@@ -23,6 +23,6 @@
 <script>
   setTimeout(function(){
     window.location.replace('{{ purchaseUrl }}');
-  }, 2000);
+  }, 1000);
 </script>
 {% endblock %}
