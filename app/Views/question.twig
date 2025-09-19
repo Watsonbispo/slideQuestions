@@ -53,6 +53,14 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn.disabled = true;
     submitBtn.style.opacity = '0.7';
     
+    // Adicionar transição sutil no card
+    const card = document.querySelector('.question-container');
+    if (card) {
+      card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      card.style.opacity = '0.7';
+      card.style.transform = 'scale(0.98)';
+    }
+    
     // Submit form with AJAX
     const formData = new FormData(form);
     
@@ -78,6 +86,15 @@ document.addEventListener('DOMContentLoaded', function() {
       if (html) {
         // Update page content
         document.body.innerHTML = html;
+        
+        // Restaurar transição do card
+        const newCard = document.querySelector('.question-container');
+        if (newCard) {
+          newCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+          newCard.style.opacity = '1';
+          newCard.style.transform = 'scale(1)';
+        }
+        
         initializeForm();
       }
     })
@@ -117,6 +134,14 @@ document.addEventListener('DOMContentLoaded', function() {
       newSubmitBtn.disabled = true;
       newSubmitBtn.style.opacity = '0.7';
       
+      // Adicionar transição sutil no card
+      const card = document.querySelector('.question-container');
+      if (card) {
+        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        card.style.opacity = '0.7';
+        card.style.transform = 'scale(0.98)';
+      }
+      
       const formData = new FormData(newForm);
       
       fetch(newForm.action, {
@@ -140,6 +165,15 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(html => {
         if (html) {
           document.body.innerHTML = html;
+          
+          // Restaurar transição do card
+          const newCard = document.querySelector('.question-container');
+          if (newCard) {
+            newCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            newCard.style.opacity = '1';
+            newCard.style.transform = 'scale(1)';
+          }
+          
           initializeForm();
         }
       })
