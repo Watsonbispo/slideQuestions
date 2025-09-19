@@ -56,16 +56,29 @@
       letter-spacing: -0.01em !important;
     }
     
-    /* ULTRA FAST transitions for questions */
+    /* Smooth transitions - removidas das perguntas */
     .question-container {
       opacity: 1;
-      transition: none !important;
     }
     
-    /* Remove all transition delays */
-    * {
-      transition: none !important;
-      animation-duration: 0s !important;
+    /* Animações das opções */
+    .options label {
+      transition: all 0.2s ease;
+    }
+    
+    .options label:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Animação do carregamento final */
+    .spinner {
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     
     @media (max-width: 768px) {
