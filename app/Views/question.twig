@@ -58,10 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     fetch(form.action, {
       method: 'POST',
-      body: formData,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
+      body: formData
     })
     .then(response => {
       if (response.redirected) {
@@ -70,12 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
           window.location.href = redirectUrl;
           return;
         }
-        return fetch(redirectUrl, {
-          method: 'GET',
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        }).then(res => res.text());
+        return fetch(redirectUrl).then(res => res.text());
       } else if (response.ok) {
         return response.text();
       } else {
@@ -141,12 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = redirectUrl;
             return;
           }
-          return fetch(redirectUrl, {
-            method: 'GET',
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest'
-            }
-          }).then(res => res.text());
+        return fetch(redirectUrl).then(res => res.text());
         } else if (response.ok) {
           return response.text();
         } else {
