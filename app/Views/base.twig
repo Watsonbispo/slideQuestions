@@ -56,9 +56,16 @@
       letter-spacing: -0.01em !important;
     }
     
-    /* Smooth transitions - removidas das perguntas */
+    /* ULTRA FAST transitions for questions */
     .question-container {
       opacity: 1;
+      transition: none !important;
+    }
+    
+    /* Remove all transition delays */
+    * {
+      transition: none !important;
+      animation-duration: 0s !important;
     }
     
     @media (max-width: 768px) {

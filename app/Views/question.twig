@@ -42,18 +42,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Handle form submission with instant AJAX
+  // Handle form submission with ULTRA FAST AJAX
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     
     const selectedAnswer = form.querySelector('input[name="answer"]:checked');
     if (!selectedAnswer) return;
     
-    // Disable form during submission
+    // Disable form immediately
     submitBtn.disabled = true;
     submitBtn.style.opacity = '0.7';
     
-    // Submit form with instant AJAX
+    // Submit form with ULTRA FAST AJAX - no delays
     const formData = new FormData(form);
     
     fetch(form.action, {
@@ -84,9 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(html => {
       if (html) {
-        // Update the page content instantly
+        // INSTANT update - no delays
         document.body.innerHTML = html;
-        // Re-initialize the form handlers
         initializeForm();
       }
     })
@@ -114,18 +113,18 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
     
-    // Re-attach form submission handler
+    // Re-attach form submission handler - ULTRA FAST
     newForm.addEventListener('submit', function(e) {
       e.preventDefault();
       
       const selectedAnswer = newForm.querySelector('input[name="answer"]:checked');
       if (!selectedAnswer) return;
       
-      // Disable form during submission
+      // Disable form immediately
       newSubmitBtn.disabled = true;
       newSubmitBtn.style.opacity = '0.7';
       
-      // Submit form with instant AJAX
+      // Submit form with ULTRA FAST AJAX
       const formData = new FormData(newForm);
       
       fetch(newForm.action, {
@@ -156,9 +155,8 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .then(html => {
         if (html) {
-          // Update the page content instantly
+          // INSTANT update - no delays
           document.body.innerHTML = html;
-          // Re-initialize the form handlers
           initializeForm();
         }
       })
