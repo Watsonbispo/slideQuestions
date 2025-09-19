@@ -53,14 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn.disabled = true;
     submitBtn.style.opacity = '0.7';
     
-    // Adicionar transição sutil no card
-    const card = document.querySelector('.question-container');
-    if (card) {
-      card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-      card.style.opacity = '0.7';
-      card.style.transform = 'scale(0.98)';
-    }
-    
     // Submit form with AJAX
     const formData = new FormData(form);
     
@@ -84,39 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(html => {
       if (html) {
-        // Transição rápida para mascarar delay
-        const currentCard = document.querySelector('.question-container');
-        if (currentCard) {
-          // Card atual sai ultra rapidamente
-          currentCard.style.transition = 'opacity 0.05s ease, transform 0.05s ease';
-          currentCard.style.opacity = '0';
-          currentCard.style.transform = 'translateY(-3px)';
-          
-          // Trocar conteúdo imediatamente
-          setTimeout(() => {
-            document.body.innerHTML = html;
-            
-            const newCard = document.querySelector('.question-container');
-            if (newCard) {
-              // Card novo entra ultra rapidamente
-              newCard.style.opacity = '0';
-              newCard.style.transform = 'translateY(3px)';
-              newCard.style.transition = 'opacity 0.08s ease, transform 0.08s ease';
-              
-              // Entrar imediatamente
-              setTimeout(() => {
-                newCard.style.opacity = '1';
-                newCard.style.transform = 'translateY(0)';
-              }, 2);
-            }
-            
-            initializeForm();
-          }, 50);
-        } else {
-          // Fallback
-          document.body.innerHTML = html;
-          initializeForm();
-        }
+        // Trocar conteúdo diretamente - sem transição
+        document.body.innerHTML = html;
+        initializeForm();
       }
     })
     .catch(error => {
@@ -155,14 +117,6 @@ document.addEventListener('DOMContentLoaded', function() {
       newSubmitBtn.disabled = true;
       newSubmitBtn.style.opacity = '0.7';
       
-      // Adicionar transição sutil no card
-      const card = document.querySelector('.question-container');
-      if (card) {
-        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        card.style.opacity = '0.7';
-        card.style.transform = 'scale(0.98)';
-      }
-      
       const formData = new FormData(newForm);
       
       fetch(newForm.action, {
@@ -185,39 +139,9 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .then(html => {
         if (html) {
-          // Transição rápida para mascarar delay
-          const currentCard = document.querySelector('.question-container');
-          if (currentCard) {
-            // Card atual sai ultra rapidamente
-            currentCard.style.transition = 'opacity 0.05s ease, transform 0.05s ease';
-            currentCard.style.opacity = '0';
-            currentCard.style.transform = 'translateY(-3px)';
-            
-            // Trocar conteúdo imediatamente
-            setTimeout(() => {
-              document.body.innerHTML = html;
-              
-              const newCard = document.querySelector('.question-container');
-              if (newCard) {
-                // Card novo entra ultra rapidamente
-                newCard.style.opacity = '0';
-                newCard.style.transform = 'translateY(3px)';
-                newCard.style.transition = 'opacity 0.08s ease, transform 0.08s ease';
-                
-                // Entrar imediatamente
-                setTimeout(() => {
-                  newCard.style.opacity = '1';
-                  newCard.style.transform = 'translateY(0)';
-                }, 2);
-              }
-              
-              initializeForm();
-            }, 50);
-          } else {
-            // Fallback
-            document.body.innerHTML = html;
-            initializeForm();
-          }
+          // Trocar conteúdo diretamente - sem transição
+          document.body.innerHTML = html;
+          initializeForm();
         }
       })
       .catch(error => {
